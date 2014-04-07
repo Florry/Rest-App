@@ -1,0 +1,13 @@
+# Home page
+GET     /                           controllers.Application.index()
+
+# Products
+GET		/products					controllers.Products.allProducts()
+GET		/products/:id				controllers.Products.oneProduct(id: Int)
+PUT		/products					controllers.Products.createProduct()
+PUT		/products/:id				controllers.Products.updateProduct(id: Int)
+DELETE	/products/:id				controllers.Products.deleteProduct(id: Int)
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)

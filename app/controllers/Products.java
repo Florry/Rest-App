@@ -7,6 +7,7 @@ import java.util.Map;
 import com.avaje.ebean.Ebean;
 
 import models.Product;
+import play.data.Form;
 import play.libs.Json;
 import play.mvc.*;
 
@@ -28,12 +29,7 @@ public class Products extends Controller
 	
 	public static Result createProduct()
 	{
-		Map<String, String[]> form = request().body().asFormUrlEncoded();
-		Product product = new Product();
-		product.name = form.get("name")[0];
-		product.description = form.get("description")[0];
-		product.cost = Integer.parseInt(form.get("cost")[0]);
-		
+		Product product = Form.form(Product.class).bindFromRequest().get();
 		Ebean.save(product);
 		return ok();
 	}

@@ -36,11 +36,8 @@ public class Products extends Controller
 	
 	public static Result updateProduct(int id)
 	{
-		Map<String, String[]> form = request().body().asFormUrlEncoded();
-		Product product = Ebean.find(Product.class, id);
-		product.name = form.get("name")[0];
-		product.description = form.get("description")[0];
-		product.cost = Integer.parseInt(form.get("cost")[0]);
+		Product product = Form.form(Product.class).bindFromRequest().get();
+		product.id = id;
 		
 		Ebean.update(product);
 		return ok();

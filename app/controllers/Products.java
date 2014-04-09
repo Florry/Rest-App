@@ -36,6 +36,10 @@ public class Products extends Controller
 	{
 		Product product = Form.form(Product.class).bindFromRequest().get();
 		product.id = id;
+<<<<<<< HEAD
+=======
+		
+>>>>>>> FETCH_HEAD
 		Ebean.update(product);
 		return ok();
 	}

@@ -1,4 +1,4 @@
-@()
+@(products: List[models.Product])
 
 <html>
 <head>
@@ -7,82 +7,55 @@
 	<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-	<title>REST Store - You look exhausted, take a rest</title>
+	<title>Validation Store - You look exhausted, take a validation</title>
 </head>
 <body>
 	<div style="margin: 30px;">
-		<h1>REST Store<small> You look exhausted, take a rest</small></h1>
+		<h1>Validation Store<small> You look exhausted, take a validation</small></h1>
 		<div class="btn btn-primary" style="text-align: left; width: 100%; padding: 2px; padding-left: 10px;"><h4>Products:</h4></div>
+		<br/>
+		<br/>
+		@if(flash.containsKey("name-error")){
+			<div class="alert alert-warning"><small>@flash().get("name-error")</small></div>
+		}
+		@if(flash.containsKey("cost-error")){
+			<div class="alert alert-warning"><small>@flash().get("cost-error")</small></div>
+		}
+		@if(flash.containsKey("description-error")){
+			<div class="alert alert-warning"><small>@flash().get("description-error")</small></div>
+		}
     	<ul id="products">
-    		<!-- list items -->
+    		@for(product <- products){
+    			<li class="btn btn-default">
+    			<small>
+	    			<b>
+		    			 (@product.getId()) @product.getName() - @product.getDescription() - @product.getCost()$
+		       			<form role="form" action ="@routes.Products.deleteProduct(product.getId())" method="POST">
+							<div class="form-group">
+								<button type="submit" class="btn btn-default">delete</button>
+							</div>
+						</form> 			
+		    			</small>
+		    		</b>
+    			</li>
+    			<br/>
+    		}
     	</ul>
-    	<button id="createProduct">New Product</button>
+    	<br/>
+    	<div style="width: 300px;">
+    		<form role="form" action ="@routes.Products.createProduct()" method="POST">
+				<div class="form-group">
+					<label>Name:</label>
+					<input type="text" class="form-control" id="name" name="name" placeholder="Product name" value="@if(flash.containsKey("name")){@flash.get("name")}">
+					<label>Cost:</label>
+					<input type="number" class="form-control" id="cost" name="cost" placeholder="Cost" value="@if(flash.containsKey("cost")){@flash.get("cost")}">
+					<label>Description:</label>
+					<input type="text" class="form-control" id="description" name="description" placeholder="Product Description" value="@if(flash.containsKey("description")){@flash.get("description")}">
+				</div>
+				<button type="submit" class="btn btn-default">Save</button>
+			</form>
+		</div>
     </div>
-    <script>
-    	function loadProducts(){
-			$('#products').empty();
-			$.get('/products', function(products){
-				$.each(products, function(arrayIndex, product){
-					$('<li>').attr('class', 'btn btn-default')
-					.append('<small>(' + product.id + ')</small> <b> ' +  product.name + '</b>  ' + product.cost + '$ - ' + product.description + ' - ' )
-					.append(
-						$('<button>')
-						.text('GET')
-						.click(function(){
-							location.href = "/products/" + product.id;
-						})
-					)
-					.append(' | ')
-					.append(
-						$('<button>')
-						.text('Delete')
-						.click(function(){
-							$.ajax({
-								url: '/products/' + product.id,
-								type: 'DELETE'
-							})
-							.always(loadProducts);
-						})
-					)
-					.append(' | ')
-					.append(
-						$('<button>')
-						.text('Update')
-						.click(function(){
-							$.ajax({
-								url: '/products/' + product.id,
-								type: 'PUT',
-								data: {
-									name: prompt("Enter a new name: ", product.name),
-									description: prompt("Enter a new description: ", product.description),
-									cost: prompt("Enter cost:", product.cost)
-								}
-							})
-							.always(loadProducts);
-						})
-					)
-					.appendTo('#products');
-
-					$('<br/>').appendTo('#products');
-				});
-			});
-    	}
-    	
-		$('#createProduct').click(function(){
-			$.ajax({
-				url: '/products',
-				type: 'PUT',
-				data: {
-					name: prompt("Enter a name: "),
-					description: prompt("Enter a description: "),
-					cost: prompt("Enter cost: ")
-				}
-			})
-			.always(loadProducts);
-		});
-
-    	$(loadProducts);
-    </script>
 
 </body>
 
